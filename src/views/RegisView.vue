@@ -58,6 +58,7 @@
           ]"
           @mousedown="showPassword(true)"
           @mouseup="showPassword(false)"
+          aria-label="show confirmed password"
         />
         <div class="invalid-feedback" v-if="passwdErrMsg != ''">
           {{ passwdErrMsg }}
@@ -86,6 +87,7 @@
           ]"
           @mousedown="showConfirmPassword(true)"
           @mouseup="showConfirmPassword(false)"
+          aria-label="show password"
         />
         <div class="invalid-feedback" v-if="confirPasswdErrMsg != ''">
           {{ confirPasswdErrMsg }}

@@ -3,7 +3,9 @@
     <div id="carouselExampleCaptions" class="carousel slide">
       <form>
         <div>
-          <input type="text" placeholder="What are you looking for?" />
+          <label>
+            <input type="text" placeholder="What are you looking for?" />
+          </label>
         </div>
       </form>
       <div class="carousel-indicators">
@@ -147,6 +149,10 @@ form div {
     top: 2vh
   }
 }
+label {
+  width: 100%;
+  height: 100%;
+}
 form div input {
   width: 100%;
   height: 100%;
@@ -156,6 +162,7 @@ form div input {
   padding: 2rem;
   color: white;
   text-align: center;
+  outline: none;
 }
 form div input::placeholder {
   color: rgba(255, 255, 255, 0.882);

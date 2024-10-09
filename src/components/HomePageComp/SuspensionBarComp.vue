@@ -2,13 +2,13 @@
   <div class="sus">
     <form>
       <div class="role">
-        <span>I'm a &nbsp;</span>
-        <input type="text">
+        <label for="identity">I'm a &nbsp;</label>
+        <input type="text" id="identity">
         <span>&nbsp;, &nbsp;</span>
       </div>
       <div class="location">
-        <span>I live in &nbsp;</span>
-        <input type="text">
+        <label for="community">I live in &nbsp;</label>
+        <input type="text" id="community">
       </div>
       <button>GO</button>
     </form>

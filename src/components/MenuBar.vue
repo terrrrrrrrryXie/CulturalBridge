@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark" aria-label="Menu">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark" aria-label="menu">
       <div class="container-fluid">
         <router-link class="navbar-brand" to="/">Cultural Bridge</router-link>
         <button
@@ -10,7 +10,7 @@
           data-bs-target="#navbarsExampleXl"
           aria-controls="navbarsExampleXl"
           aria-expanded="false"
-          aria-label="Toggle navigation"
+          aria-label="expand menu"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -131,6 +131,7 @@
         v-if="currentPath !== '/login'"
         :data-bs-toggle="isLog ? 'modal' : null"
         :data-bs-target="isLog ? '#exampleModal' : null"
+        aria-label="go to login"
       />
     </nav>
     <div

@@ -4,27 +4,30 @@
     <form @submit.prevent="login">
       <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
-        <input
-          type="email"
-          :class="['form-control', emailErrMsg == '' ? '' : 'is-invalid']"
-          id="email"
-          aria-describedby="emailHelp"
-          @blur="validateEmail"
-          v-model="userInfo.email"
-        />
+          <input
+            type="email"
+            :class="['form-control', emailErrMsg == '' ? '' : 'is-invalid']"
+            id="email"
+            aria-describedby="email"
+            @blur="validateEmail"
+            v-model="userInfo.email"
+          />
+        
         <div class="invalid-feedback" v-if="emailErrMsg !== ''">
           {{ emailErrMsg }}
         </div>
       </div>
       <div class="mb-3 password">
         <label for="password" class="form-label">Password</label>
-        <input
-          :type="show ? 'text' : 'password'"
-          :class="['form-control', passwdErrMsg == '' ? '' : 'is-invalid']"
-          id="password"
-          @blur="validatePasswd"
-          v-model="userInfo.password"
-        />
+          <input
+            :type="show ? 'text' : 'password'"
+            :class="['form-control', passwdErrMsg == '' ? '' : 'is-invalid']"
+            id="password"
+            @blur="validatePasswd"
+            v-model="userInfo.password"
+            aria-describedby="email"
+          />
+        
         <a
           href="#"
           :class="[
@@ -34,6 +37,7 @@
           ]"
           @mousedown="showPassword(true)"
           @mouseup="showPassword(false)"
+          aria-label="show password"
         />
         <div class="invalid-feedback" v-if="passwdErrMsg !== ''">
           {{ passwdErrMsg }}

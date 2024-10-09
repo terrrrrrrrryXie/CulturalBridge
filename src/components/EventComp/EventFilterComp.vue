@@ -1,29 +1,34 @@
 <template>
   <div class="container box">
     <form @submit.prevent="filt">
-      <select
-        class="form-select selectCommu"
-        aria-label="select community"
-        v-model="selectedCommu"
-      >
-        <option selected>Choose Community</option>
-
-        <option
-          v-for="(commu, index) in store.state.melCommunityList"
-          :key="index"
-          :value="commu"
+      <label class="selectLabel">
+        <select
+          class="form-select selectCommu"
+          aria-label="select community"
+          v-model="selectedCommu"
         >
-          {{ commu }}
-        </option>
-      </select>
-      <input
-        type="text"
-        class="form-control"
-        id="inputPassword2"
-        placeholder="Key word"
-        v-model="keyWord"
-      />
+          <option selected>Choose Community</option>
 
+          <option
+            v-for="(commu, index) in store.state.melCommunityList"
+            :key="index"
+            :value="commu"
+          >
+            {{ commu }}
+          </option>
+        </select>
+      </label>
+      
+      <label class="inputLabel">
+        <input
+          type="text"
+          class="form-control"
+          id="inputPassword2"
+          placeholder="Key word"
+          v-model="keyWord"
+        />
+      </label>
+      
       <button class="btn btn-primary mb-3 reset" @click="reset">
         <i class="bi bi-arrow-counterclockwise" />
       </button>
@@ -142,11 +147,19 @@ form {
   background-color: rgb(28, 28, 28);
   color: white;
 }
-.selectCommu {
+.selectLabel {
   width: 30%;
+  /* height: 100%; */
+  /* border: 2px red solid; */
+}
+.inputLabel {
+  width: 40%;
 }
 input {
-  width: 40%;
+  height: 100%;
+}
+select {
+  height: 100%;
 }
 button {
   width: 16%;

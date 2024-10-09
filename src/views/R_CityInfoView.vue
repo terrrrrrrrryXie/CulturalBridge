@@ -2,14 +2,16 @@
   <PageTopicComp :page="0" />
   <div class="container main">
     <form class="d-flex" @submit.prevent="redirect(inputPlace)">
-      <input 
-        class="form-control me-2" 
-        type="search" 
-        placeholder="Search place here" 
-        aria-label="Search"
-        v-model="inputPlace"
-      >
-        <button class="btn btn-outline-primary" type="submit">Search</button>
+      <label>
+        <input 
+          class="form-control me-2" 
+          type="search" 
+          placeholder="Search place here" 
+          aria-label="Search"
+          v-model="inputPlace"
+        >
+      </label>
+      <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
     
     <div class="row">
@@ -130,7 +132,7 @@ form input {
 }
 
 .main {
-  border: 2px yellow solid;
+  /* border: 2px yellow solid; */
   height: 70vh;
 }
 

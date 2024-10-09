@@ -4,28 +4,34 @@
     <div class="left">
         <form class="d-flex" @submit.prevent="navigate">
             <div class="input">
-                <input 
-                class="form-control me-2" 
-                type="search" 
-                placeholder="Enter your start point" 
-                aria-label="Search"
-                v-model="origin"
-                @input="associatePlace(origin, 'origin')"
+                <label>
+                    <input 
+                    class="form-control me-2" 
+                    type="search" 
+                    placeholder="Enter your start point" 
+                    aria-label="Search"
+                    v-model="origin"
+                    @input="associatePlace(origin, 'origin')"
+                    >
+                </label>
+                <label>
+                    <input 
+                    class="form-control me-2" 
+                    type="search" 
+                    placeholder="Enter your destination" 
+                    aria-label="Search"
+                    v-model="destination"
+                    @input="associatePlace(destination, 'destination')"
                 >
-                <input 
-                class="form-control me-2" 
-                type="search" 
-                placeholder="Enter your destination" 
-                aria-label="Search"
-                v-model="destination"
-                @input="associatePlace(destination, 'destination')"
-                >
-                <select class="form-select" v-model="routeMode" aria-label="Default select example">
-                    <option value="walking">Walking</option>
-                    <option value="driving">Driving</option>
-                    <option value="bicycling">Bicycling</option>
-                    <option value="transit">Transit</option>
-                </select>
+                </label>
+                <label>
+                    <select class="form-select" v-model="routeMode" aria-label="Default select example">
+                        <option value="walking">Walking</option>
+                        <option value="driving">Driving</option>
+                        <option value="bicycling">Bicycling</option>
+                        <option value="transit">Transit</option>
+                    </select>
+                </label>
             </div>
         
             <button 
@@ -184,6 +190,9 @@ const setInputBar = (content) => {
 </script>
 
 <style scoped>
+    label {
+        width: 100%;
+    }
     .reset {
         position: absolute;
         right: 0.6vw;
