@@ -46,7 +46,6 @@
                 </li>
               </ul>
             </li>
-
             <li class="nav-item dropdown">
               <a
                 class="nav-link dropdown-toggle"
@@ -118,6 +117,25 @@
                 <li>
                   <router-link class="dropdown-item" to="/about_us/join_us">
                     Join Us
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                >Account</a
+              >
+              <ul class="dropdown-menu">
+                <li>
+                  <router-link
+                    class="dropdown-item"
+                    to="/account/booked_events"
+                  >
+                    Booked Events
                   </router-link>
                 </li>
               </ul>

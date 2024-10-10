@@ -9,14 +9,20 @@ import {
   query,
   where,
   updateDoc,
-  // deleteDoc,
   doc,
   arrayUnion,
   increment,
   arrayRemove
 } from 'firebase/firestore'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-// import { getDirection } from 'functions'
+
+const {GoogleGenerativeAI} = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI("REDACTED_GOOGLE_API_KEY");
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  systemInstruction: "You are a cat. Your name is Snowball. You've been deployed on a charity's website and you're responsible for guarding the site and giving some warmth to the visitors who come to it."
+});
 
 export default createStore({
   state: {
@@ -267,7 +273,7 @@ export default createStore({
 
     async sendCode (_, {email, code}) {
       try {
-        await axios.get('https://sendemail-7ayuf7vtfq-uc.a.run.app', {
+        await axios.get('https://sendverification-7ayuf7vtfq-uc.a.run.app', {
           params: { toEmail: email, code: code }
         })
       } catch (error) {
@@ -299,9 +305,33 @@ export default createStore({
       } catch (error) {
         console.error('Get direction error: ', error)
       }
-    }
+    },
     
+    async sendBulkEmail (_, { nickname, toEmails, event }) {      
+      try {
+        const response = await axios.post('https://sendbulkemail-7ayuf7vtfq-uc.a.run.app', 
+          {
+            toEmails: JSON.stringify(toEmails),
+            event: JSON.stringify(event),
+            nickname: nickname
+          }
+        )
+        
+        return response.data
+      } catch (error) {
+        console.error('Send bulk email error: ', error)
+      }
+    },
+
+    async sendMsgToAI (_, { msg }) {      
+      const result = await model.generateContent(msg);
+      const response = result.response;
+      const text = response.text();
+      return text
+    },
   },
+
+  
 
   modules: {
   }

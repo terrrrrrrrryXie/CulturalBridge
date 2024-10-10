@@ -55,9 +55,9 @@ exports.hideEvent = onRequest(async (req, res) => {
         result.docs[0].ref.delete();
         res.status(200).send("unhide success");
       } else {
-        console.error("caonimaa");
+        console.error("fail");
         res.status(400).send("invalid input");
-        console.error("caonimade");
+        console.error("fail");
       }
     } catch (error) {
       console.error("Fail request", error.message);
@@ -66,7 +66,7 @@ exports.hideEvent = onRequest(async (req, res) => {
   });
 });
 
-exports.sendEmail = onRequest(async (req, res) => {
+exports.sendVerification = onRequest(async (req, res) => {
   cors(req, res, async () => {
     const toEmail = req.query.toEmail;
     const code = req.query.code;
@@ -172,3 +172,38 @@ exports.getDirection = onRequest(async (req, res) => {
     }
   });
 });
+
+exports.sendBulkEmail = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    const toEmails = JSON.parse(req.body.toEmails);
+    const nickname = req.body.nickname;
+    const event = JSON.parse(req.body.event);
+    if (!toEmails || !event || !nickname) {
+      res.status(400).send("Invalid request");
+      return;
+    }
+    try {
+      const msg = {
+        to: toEmails,
+        from: "15169131907@163.com",
+        templateId: "d-cd8dcbfa81bb464fb12b869190ecbbe5",
+        dynamic_template_data: {
+          nickname: nickname,
+          event_name: event.event_name,
+          community: event.location.community,
+          date: event.date,
+          time: event.time,
+          ticket_price: event.ticket_price,
+          attendees: event.attendees,
+          remaining_spots: event.remaining_spots,
+        },
+      };
+      await sgMail.sendMultiple(msg);
+      res.status(200).send("success");
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  });
+});
+
+

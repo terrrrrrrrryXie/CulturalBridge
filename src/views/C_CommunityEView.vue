@@ -81,6 +81,10 @@ onMounted(async () => {
   backup.value = visibleEventList.value
 })
 
+const checkIgnoreCase = (attribute, keyword) => {
+  return attribute.toLowerCase().includes(keyword.toLowerCase())
+}
+
 const filtList = ({ selectedCommu, keyWord }) => {
   const isCommuChosen = selectedCommu !== 'Choose Community'
   const isKeyWdChosen = keyWord !== ''
@@ -99,8 +103,13 @@ const filtList = ({ selectedCommu, keyWord }) => {
     // boolean: no specified key word/description matches key word/topic matches key word
     const checkKeyWord =
       !isKeyWdChosen ||
-      event.description.includes(keyWord) ||
-      event.event_name.includes(keyWord)
+      checkIgnoreCase(event.description, keyWord) ||
+      checkIgnoreCase(event.event_name, keyWord) ||
+      checkIgnoreCase(event.location.address, keyWord) ||
+      checkIgnoreCase(event.location.community, keyWord) ||
+      checkIgnoreCase(event.organizer, keyWord) ||
+      checkIgnoreCase(event.time, keyWord) ||
+      event.date.includes(keyWord)
 
     // selected community, no key word
     // decide whether keep this event by match key word

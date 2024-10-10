@@ -65,6 +65,7 @@
         :ratedPeople="eventInfo.ratedPeople"
         @exportPDF="exportPDF"
         @sendConfirmation="sendConfirmation"
+        @sendBulkEmail="sendBulkEmail"
       />
     </div>
   </div>
@@ -129,6 +130,14 @@ const sendConfirmation = async () => {
       fileContent: base64Data
     })
   };
+}
+
+const sendBulkEmail = ({ nickname, toEmails }) => {
+  store.dispatch('sendBulkEmail', {
+    nickname: nickname,
+    toEmails: toEmails,
+    event: eventInfo.value
+  })
 }
 </script>
 

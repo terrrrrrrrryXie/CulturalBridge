@@ -65,6 +65,11 @@ const routes = [
     component: () => import('../views/AU_JoinUsView')
   },
   {
+    path: '/account/booked_events',
+    name: 'bookedEvents',
+    component: () => import('../views/A_BookedEventsView')
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/LoginView')
