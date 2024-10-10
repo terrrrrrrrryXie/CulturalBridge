@@ -56,7 +56,9 @@ export default createStore({
     // event list
     eventList: null,
     // hided event list
-    hidedEventList: null
+    hidedEventList: null,
+
+    immiStories: null
   },
   getters: {
   },
@@ -79,6 +81,10 @@ export default createStore({
     // modify specific value in local
     modifyEventList (state, { id, attribute, newValue }) {
       state.eventList.find(e => e.id === id)[attribute] = newValue
+    },
+    // set immigrant stories
+    setImmiStories (state, storiesList) {
+      state.immiStories = storiesList
     }
   },
 
@@ -328,6 +334,21 @@ export default createStore({
       const response = result.response;
       const text = response.text();
       return text
+    },
+
+    async getImmiStoriesList ({ commit }) {
+      try {
+        const allStoriesFromDatabase = await getDocs(collection(db, 'immigrant_stories'))
+  
+        const allStories = []
+        allStoriesFromDatabase.forEach(element => {
+            allStories.push(element.data())
+          })
+  
+        commit('setImmiStories', allStories)
+      } catch (error) {
+        console.error(error)
+      }
     },
   },
 

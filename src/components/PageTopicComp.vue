@@ -22,12 +22,14 @@ const props = defineProps({
 const icon = ref([
   "buildings",
   "calendar-event",
-  'sign-turn-right'
+  'sign-turn-right',
+  "person-arms-up"
 ]);
 const name = ref([
     "City Info",
     "Community Event",
-    'Navigator'
+    'Navigator',
+    'Immigrant Stories'
 ])
 
 const iconClass = computed(() => {
