@@ -41,7 +41,7 @@
                 </li>
                 <li>
                   <router-link class="dropdown-item" to="/community/events">
-                    {{ store.state.currentRole === 'Admin'?'Events Manage':'Events'}}
+                    {{ store.state.currentRole === 'admin'?'Events Manage':'Events'}}
                   </router-link>
                 </li>
               </ul>
