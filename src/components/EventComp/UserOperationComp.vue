@@ -98,10 +98,9 @@ const exportPDF = () => {
   emit('exportPDF')
 }
 
-const inviteFriends = () => {
-  friendEmail.value = ['', '']
-  
+const inviteFriends = () => { 
   emit('sendBulkEmail', { nickname: nickname.value, toEmails: friendEmail.value })
+  friendEmail.value = ['', '']
 }
 </script>
 
