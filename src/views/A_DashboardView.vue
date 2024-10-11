@@ -5,7 +5,9 @@
                 filterDisplay="menu" :loading="loading" :globalFilterFields="['email', 'booked', 'ratedEvent', 'role']"
                 editMode="row" @row-edit-save="onRowEditSave" selectionMode="single" :metaKeySelection="metaKey">
             <template #header>
-                <div>Total number of users: {{ allUsers.length }}</div>
+                <div>Total number: {{ allUsers.length }}</div>
+                <div>Total number of users: {{ allUsers.slice().filter(user => user.role === 'user').length }}</div>
+                <div>Total number of admins: {{ allUsers.slice().filter(user => user.role === 'admin').length }}</div>
                 <div class="flex justify-between filterBar">
                 <button class="save btn btn-primary" @click="saveChanges" v-if="isEdited">Save</button>
                 <button class="save btn btn-danger" @click="deleteUser" v-if="showDelete">Delete</button>
