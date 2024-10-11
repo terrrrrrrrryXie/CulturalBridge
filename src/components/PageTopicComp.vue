@@ -23,13 +23,15 @@ const icon = ref([
   "buildings",
   "calendar-event",
   'sign-turn-right',
-  "person-arms-up"
+  "person-arms-up",
+  "speedometer"
 ]);
 const name = ref([
     "City Info",
     "Community Event",
     'Navigator',
-    'Immigrant Stories'
+    'Immigrant Stories',
+    'Dashboard'
 ])
 
 const iconClass = computed(() => {

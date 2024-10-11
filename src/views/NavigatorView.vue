@@ -35,8 +35,9 @@
             </div>
         
             <button 
-            class="btn btn-outline-primary" 
-            type="submit"
+                class="btn btn-outline-primary" 
+                type="submit"
+                :disabled="!(originLocation&&destinationLocation)"
             >
             {{ originLocation?destinationLocation?'Go':'Choose Destination':'Choose Start Point' }}
             </button>
@@ -227,6 +228,8 @@ const setInputBar = (content) => {
         }
         .list {
             height: 26vh !important;
+            margin-top: 2.4vh;
+            margin-bottom: 2.4vh !important;
         }
         .empty {
             font-size: 4vw !important;
@@ -240,7 +243,7 @@ const setInputBar = (content) => {
         /* border: 2px green solid; */
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
         height: 18vh;
     }
@@ -248,8 +251,8 @@ const setInputBar = (content) => {
         width: 68%;
     }
     form button {
-        width: 34%;
-        height: 60%;
+        width: 20%;
+        height: 50%;
     }
     .list {
         width: 100%;

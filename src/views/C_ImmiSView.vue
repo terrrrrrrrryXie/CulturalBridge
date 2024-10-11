@@ -1,18 +1,17 @@
 <template>
 	<PageTopicComp :page="3" />
 	<div class="container">
-        <DataTable v-model:filters="filters" :value="immiStories" paginator showGridlines :rows="10" dataKey="id"
+        <DataTable v-model:filters="filters" :value="immiStories" paginator removableSort showGridlines :rows="10" dataKey="id"
                 filterDisplay="menu" :loading="loading" :globalFilterFields="['author', 'title', 'date', 'content']">
             <template #header>
-				
-                <div class="flex justify-between">
-					<button @click="clearFilter()">clear</button>
-					<input type="text" v-model="filters['global'].value" placeholder="Keyword Search">
+                <div class="flex justify-between filterBar">
+					<button class="clear btn btn-outline-success" @click="initFilters">Clear</button>
+					<input class="search form-control" type="text" v-model="filters['global'].value" placeholder="Keyword Search">
                 </div>
             </template>
             <template #empty> No stories found. </template>
             <template #loading> Loading stories data...please wait. </template>
-            <Column field="author" header="Author" style="min-width: 12rem">
+            <Column field="author" header="Author" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                     {{ data.author }}
                 </template>
@@ -20,7 +19,7 @@
                     <InputText v-model="filterModel.value" type="text" placeholder="Search by name" />
                 </template>
             </Column>
-            <Column field="title" header="Title" filterField="title" style="min-width: 12rem">
+            <Column field="title" header="Title" filterField="title" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
 					{{ data.title }}
 				</template>
@@ -28,7 +27,7 @@
                     <InputText v-model="filterModel.value" type="text" placeholder="Search by title" />
                 </template>
             </Column>
-            <Column header="Date" filterField="published_date" dataType="date" style="min-width: 10rem">
+            <Column field="published_date" header="Date" filterField="published_date" dataType="date" style="min-width: 10rem" sortable>
                 <template #body="{ data }">
                     {{ formatDate(data.published_date) }}
                 </template>
@@ -36,12 +35,12 @@
                     <DatePicker v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
                 </template>
             </Column>
-            <Column header="content" filterField="content" style="min-width: 10rem">
+            <Column field="content" header="Content" filterField="content" style="min-width: 10rem" sortable>
                 <template #body="{ data }">
                     {{ data.content }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText v-model="filterModel.value" type="text" placeholder="Search by name" class="!p-8" />
+                    <InputText v-model="filterModel.value" type="text" placeholder="Search by content" class="!p-8" />
                 </template>
             </Column>
         </DataTable>
@@ -84,10 +83,6 @@ const formatDate = (value) => {
 	});
 }
 
-const clearFilter = () => {
-  initFilters();
-};
-
 onMounted(async () => {
   await store.dispatch('getImmiStoriesList');
   immiStories.value = store.state.immiStories.map((story) => ({
@@ -99,3 +94,17 @@ onMounted(async () => {
 
 initFilters();
 </script>
+
+<style scoped>
+.filterBar {
+	width: 100%;
+	/* border: 2px red solid; */
+	flex-direction: row;
+	display: flex;
+	justify-content: flex-end;
+}
+.search {
+	width: 20%;
+	margin-left: 2vw;
+}
+</style>

@@ -158,7 +158,7 @@ const login = async () => {
 
 // admin login
 const adminLogin = () => {
-  store.commit('setLogState', { newIsLogin: true, newCurrentUserInfo: { email: 'Admin', password: '', ratedEvent: {} }, newCurrentRole: 'Admin' })
+  store.commit('setLogState', { newIsLogin: true, newCurrentUserInfo: { email: 'Admin', password: '', ratedEvent: {} }, newCurrentRole: 'admin' })
   const redirectTo = route.query.redirect || '/'
   router.push(redirectTo)
 }

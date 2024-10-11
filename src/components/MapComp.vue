@@ -54,7 +54,6 @@ watch(
   () => props.location,
   (newValue) => {
     initMap(newValue)
-    console.log(newValue)
   },
   { immediate: true }
 )

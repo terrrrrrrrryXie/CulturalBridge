@@ -72,4 +72,13 @@ console.log(props);
     padding: 1.4vh;
     border-radius: .6vw;
 }
+
+@media (max-width: 768px) {
+    .userAvatar {
+        font-size: 6vw;
+    }
+    .modelAvatar {
+        font-size: 6vw;
+    }
+}
 </style>

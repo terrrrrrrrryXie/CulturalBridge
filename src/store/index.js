@@ -1,6 +1,5 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
-import { generateSalt, hashPassword } from '../utils/crypto'
 import db from '../firebase/init.js'
 import {
   collection,
@@ -9,6 +8,7 @@ import {
   query,
   where,
   updateDoc,
+  deleteDoc,
   doc,
   arrayUnion,
   increment,
@@ -153,13 +153,8 @@ export default createStore({
         console.log('Regist fail: ', error)
       })
 
-      // generate a salt value for encryption
-      const salt = generateSalt()
-
       await addDoc(collection(db, 'users'), {
         email: email,
-        password: hashPassword(passwd, salt),
-        salt: salt,
         // avoid user rate one event twice
         ratedEvent: {},
         booked: [],
@@ -350,6 +345,70 @@ export default createStore({
         console.error(error)
       }
     },
+
+    async getAllUsers () {
+      try {
+        const allUsersFromDatabase = await getDocs(collection(db, 'users'))
+  
+        const allUsers = []
+        allUsersFromDatabase.forEach(element => {
+            allUsers.push(element.data())
+          })
+  
+        return allUsers
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    
+    async updateUsers (_, { newDoc }) {
+      const newInfoList = []
+      newDoc.forEach((user) => newInfoList.push({email: user.email, role: user.role}))
+      const allUsersFromDatabase = await getDocs(collection(db, 'users'))
+      
+      try {
+        allUsersFromDatabase.forEach(async (user) => {
+          const newInfo = newInfoList.find(info => info.email === user.data().email)
+          if (!newInfo) {
+            await deleteDoc(doc(db, 'users', user.id))
+          } else {
+            await updateDoc(doc(db, 'users', user.id), { role: newInfo.role })
+          }
+        })
+        return true
+      } catch (error) {
+        return false
+      }      
+    },
+
+    async getEventListAPI () {
+      try {
+        const response = await axios.get('https://getallevent-7ayuf7vtfq-uc.a.run.app/getallevent')
+        return response.data
+      } catch (error) {
+        console.error(error.message)
+      }
+    },
+
+    async countEventListAPI () {
+      try {
+        const response = await axios.get('https://countallevent-7ayuf7vtfq-uc.a.run.app/countallevent')
+        return response.data
+      } catch (error) {
+        console.error(error.message)
+      }
+    },
+
+    async getWeather (_, { location }) {
+      try {
+        const apikey = 'REDACTED_OPENWEATHER_KEY';
+        const url = `http://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=${apikey}`;
+        const response = await axios.get(url);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    }
   },
 
   

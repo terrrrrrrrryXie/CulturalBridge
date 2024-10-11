@@ -69,8 +69,6 @@ watch(
   { deep: true }
 );
 
-
-
 const send = async (inputText) => {
     userInput.value = ''
     contextPrompt.value['contents'].push({
@@ -115,7 +113,7 @@ const send = async (inputText) => {
 .toggle {
     position: fixed;
     right: 0;
-    bottom: 14vh;
+    bottom: 24vh;
     z-index: 1;
 }
 

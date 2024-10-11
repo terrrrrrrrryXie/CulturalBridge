@@ -127,15 +127,53 @@
                 href="#"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                >Account</a
-              >
+                >
+                  Public API Access
+              </a>
               <ul class="dropdown-menu">
                 <li>
                   <router-link
                     class="dropdown-item"
-                    to="/account/booked_events"
+                    to="/api/getEventListAPI"
                   >
-                    Booked Events
+                    Event List
+                  </router-link>
+                </li>
+                <li>
+                  <router-link
+                    class="dropdown-item"
+                    to="/api/countEventListAPI"
+                  >
+                    Count Event
+                  </router-link>
+                </li>
+                <li>
+                  <router-link
+                    class="dropdown-item"
+                    to="/api/getWeatherAPI"
+                  >
+                    Get Weather
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                v-if="store.state.currentRole === 'admin'"
+                >
+                  Admin
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <router-link
+                    class="dropdown-item"
+                    to="/admin/dashboard"
+                  >
+                    Dashboard
                   </router-link>
                 </li>
               </ul>
@@ -144,8 +182,9 @@
         </div>
       </div>
       <router-link
-        class="bi bi-person-circle"
+        :class="['bi', store.state.currentRole === 'admin' ? 'bi-command' : 'bi-person']"
         :to="isLog ? null : '/login'"
+        id="userIcon"
         v-if="currentPath !== '/login'"
         :data-bs-toggle="isLog ? 'modal' : null"
         :data-bs-target="isLog ? '#exampleModal' : null"
@@ -213,30 +252,30 @@ const currentUser = computed(() => {
 })
 </script>
 <style>
-.bi-person-circle {
+#userIcon {
   color: white;
   font-size: 2.4rem;
   margin-right: 2vw;
 }
 @media (max-width: 1199.9px) {
-  .bi-person-circle {
+  #userIcon {
     position: absolute;
     right: 5.2vw;
     top: 0;
   }
 }
 @media (max-width: 992px) {
-  .bi-person-circle {
+  #userIcon {
     right: 6.4vw;
   }
 }
 @media (max-width: 768px) {
-  .bi-person-circle {
+  #userIcon {
     right: 12.4vw;
   }
 }
 @media (max-width: 768px) {
-  .bi-person-circle {
+  #userIcon {
     right: 16.4vw;
   }
 }

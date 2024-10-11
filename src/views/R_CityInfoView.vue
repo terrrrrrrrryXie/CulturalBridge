@@ -1,6 +1,18 @@
 <template>
   <PageTopicComp :page="0" />
+  
   <div class="container main">
+    <div v-if="weatherData" class="weatherBar">
+      <strong>
+        {{ weatherData.name }}, {{ weatherData.sys.country }}
+      </strong>
+      <div>
+        <img :src="iconUrl" alt="Weather Icon" />
+        <p>{{ temperature }} °C</p>
+      </div>
+      <span>{{ weatherData.weather[0].description }}</span>
+    </div>
+    <hr>
     <form class="d-flex" @submit.prevent="redirect(inputPlace)">
       <label>
         <input 
@@ -40,14 +52,14 @@
 <script setup>
 import PageTopicComp from '@/components/PageTopicComp.vue'
 import MapComp from '../components/MapComp.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 // the position shown on map
 const location = ref(null)
 
 // get current location coordinate and set to location
-const getCurrentLocation = () => {
+const getCurrentLocation = async () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
       location.value = {
@@ -59,10 +71,6 @@ const getCurrentLocation = () => {
     alert('Geolocation is not supported by this browser.')
   }
 }
-
-onMounted(() => {
-  getCurrentLocation()
-})
 
 // get all community name
 const store = useStore()
@@ -84,9 +92,45 @@ const redirect = async (name) => {
     console.error(error)
   }
 }
+
+const weatherData = ref(null);
+
+const temperature = computed(() => 
+  weatherData.value ? Math.floor(weatherData.value.main.temp - 273) : null
+);
+
+const iconUrl = computed(() =>
+  weatherData.value
+    ? `http://api.openweathermap.org/img/w/${weatherData.value.weather[0].icon}.png`
+    : null
+);
+
+const fetchWeatherData = async (location) => {
+  weatherData.value = await store.dispatch('getWeather', { location: location })
+};
+
+watch(location, async (newValue) => {
+  await fetchWeatherData(newValue)
+})
+
+onMounted(() => {
+  getCurrentLocation()
+})
 </script>
 
 <style scoped>
+.weatherBar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* border: 2px rebeccapurple solid; */
+  justify-content: space-between;
+}
+.weatherBar div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 form {
   /* border: 2px green solid; */
   display: flex;

@@ -65,9 +65,10 @@ const routes = [
     component: () => import('../views/AU_JoinUsView')
   },
   {
-    path: '/account/booked_events',
-    name: 'bookedEvents',
-    component: () => import('../views/A_BookedEventsView')
+    path: '/admin/dashboard',
+    name: 'dashboard',
+    component: () => import('../views/A_DashboardView'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/login',
@@ -78,8 +79,22 @@ const routes = [
     path: '/regis',
     name: 'regis',
     component: () => import('../views/RegisView')
+  },
+  {
+    path: '/api/getEventListAPI',
+    name: 'getEventListAPI',
+    component: () => import('../views/EventListAPIAccessView')
+  },
+  {
+    path: '/api/countEventListAPI',
+    name: 'countEventListAPI',
+    component: () => import('../views/CountEventAPIAccessView')
+  },
+  {
+    path: '/api/getWeatherAPI',
+    name: 'getWeatherAPI',
+    component: () => import('../views/WeatherAPIAccessView')
   }
-
 ]
 
 const router = createRouter({

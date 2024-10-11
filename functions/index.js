@@ -28,6 +28,7 @@ const {onRequest} = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const cors = require("cors")({origin: true});
 
+
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey("REDACTED_SENDGRID_KEY");
 
@@ -206,4 +207,46 @@ exports.sendBulkEmail = onRequest(async (req, res) => {
   });
 });
 
+exports.getAllEvent = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      const allEventFromDatabase =
+        await admin.firestore().collection("events").get();
 
+      // hided events
+      const hideEventList = [];
+      const hideEventListFromDatabase =
+        await admin.firestore().collection("hideList").get();
+      hideEventListFromDatabase.forEach((event) => {
+        hideEventList.push(event.data().id);
+      });
+
+      // filter hided events
+      const allEvents = [];
+      allEventFromDatabase.forEach((element) => {
+        if (!hideEventList.includes(element.data().id)) {
+          allEvents.push(element.data());
+        }
+      });
+
+      res.status(200).send(allEvents);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
+});
+
+exports.countAllEvent = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      const allEventFromDatabase =
+        await admin.firestore().collection("events").get();
+
+      const count = allEventFromDatabase.size;
+
+      res.status(200).send({count});
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
+});
