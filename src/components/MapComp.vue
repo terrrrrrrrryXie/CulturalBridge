@@ -17,7 +17,7 @@ const loadGoogleMaps = () => {
     } else {
       const script = document.createElement('script')
       script.src =
-        'https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_API_KEY&callback=initMap'
+        `https://maps.googleapis.com/maps/api/js?key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}&callback=initMap`
       script.async = true
       script.defer = true
       script.onerror = reject

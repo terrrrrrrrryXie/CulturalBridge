@@ -25,12 +25,21 @@
 
 const axios = require("axios");
 const {onRequest} = require("firebase-functions/v2/https");
+const {defineSecret} = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const cors = require("cors")({origin: true});
 
 
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey("REDACTED_SENDGRID_KEY");
+
+const sendGridApiKey = defineSecret("SENDGRID_API_KEY");
+const googleMapsApiKey = defineSecret("GOOGLE_MAPS_API_KEY");
+const geminiApiKey = defineSecret("GEMINI_API_KEY");
+const openWeatherApiKey = defineSecret("OPENWEATHER_API_KEY");
+
+const configureSendGrid = () => {
+  sgMail.setApiKey(sendGridApiKey.value());
+};
 
 admin.initializeApp();
 
@@ -67,145 +76,161 @@ exports.hideEvent = onRequest(async (req, res) => {
   });
 });
 
-exports.sendVerification = onRequest(async (req, res) => {
-  cors(req, res, async () => {
-    const toEmail = req.query.toEmail;
-    const code = req.query.code;
-    if (!toEmail || !code) {
-      res.status(400).send("Invalid request");
-      return;
-    }
-    try {
-      const msg = {
-        to: toEmail,
-        from: "15169131907@163.com",
-        templateId: "d-b1753c57d9284b448d896fece8da1a3d",
-        dynamic_template_data: {
-          code: code,
-        },
-      };
-      await sgMail.send(msg);
-      res.status(200).send("success");
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-});
+exports.sendVerification = onRequest(
+    {secrets: [sendGridApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        const toEmail = req.query.toEmail;
+        const code = req.query.code;
+        if (!toEmail || !code) {
+          res.status(400).send("Invalid request");
+          return;
+        }
+        try {
+          configureSendGrid();
+          const msg = {
+            to: toEmail,
+            from: "15169131907@163.com",
+            templateId: "d-b1753c57d9284b448d896fece8da1a3d",
+            dynamic_template_data: {
+              code: code,
+            },
+          };
+          await sgMail.send(msg);
+          res.status(200).send("success");
+        } catch (error) {
+          res.status(500).send(error.message);
+        }
+      });
+    });
 
-exports.sendConfirmation = onRequest(async (req, res) => {
-  cors(req, res, async () => {
-    const toEmail = req.body.toEmail;
-    const fileContent = req.body.content;
-    if (!toEmail || !fileContent) {
-      res.status(400).send("Invalid request");
-      return;
-    }
-    try {
-      const msg = {
-        to: toEmail,
-        from: "15169131907@163.com",
-        subject: "Booking Confirmation",
-        text: "Thank you for booking an event with us. " +
+exports.sendConfirmation = onRequest(
+    {secrets: [sendGridApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        const toEmail = req.body.toEmail;
+        const fileContent = req.body.content;
+        if (!toEmail || !fileContent) {
+          res.status(400).send("Invalid request");
+          return;
+        }
+        try {
+          configureSendGrid();
+          const msg = {
+            to: toEmail,
+            from: "15169131907@163.com",
+            subject: "Booking Confirmation",
+            text: "Thank you for booking an event with us. " +
         "Please find the booking confirmation attached as a PDF file.",
-        attachments: [
-          {
-            content: fileContent,
-            filename: "BookingConfirmation.pdf",
-            type: "application/pdf",
-            disposition: "attachment",
-          },
-        ],
-      };
-      await sgMail.send(msg);
-      res.status(200).send("success");
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-});
-
-exports.getCommunityInfo = onRequest(async (req, res) => {
-  cors(req, res, async () => {
-    try {
-      const input = req.query.input;
-      const key = "REDACTED_GOOGLE_API_KEY";
-
-      const response = await axios.get("https://maps.googleapis.com/maps/api/place/textsearch/json", {
-        params: {
-          query: input,
-          key: key,
-        },
+            attachments: [
+              {
+                content: fileContent,
+                filename: "BookingConfirmation.pdf",
+                type: "application/pdf",
+                disposition: "attachment",
+              },
+            ],
+          };
+          await sgMail.send(msg);
+          res.status(200).send("success");
+        } catch (error) {
+          res.status(500).send(error.message);
+        }
       });
+    });
 
-      return res.status(200).send(response.data);
-    } catch (error) {
-      return res.status(500).send({error: "Failed to fetch community info."});
-    }
-  });
-});
+exports.getCommunityInfo = onRequest(
+    {secrets: [googleMapsApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        try {
+          const input = req.query.input;
+          const key = googleMapsApiKey.value();
 
-exports.getDirection = onRequest(async (req, res) => {
-  cors(req, res, async () => {
-    const originLocation = req.query.origin;
-    const destinationLocation = req.query.destination;
-    const mode = req.query.mode;
-    if (!originLocation || !destinationLocation || !mode) {
-      res.status(400).send("Invalid request");
-      return;
-    }
+          const response = await axios.get(
+              "https://maps.googleapis.com/maps/api/place/textsearch/json",
+              {params: {query: input, key: key}},
+          );
 
-    const apiKey = "REDACTED_GOOGLE_API_KEY";
-    try {
-      const response = await axios.get("https://maps.googleapis.com/maps/api/directions/json", {
-        params: {
-          origin: originLocation,
-          destination: destinationLocation,
-          mode: mode,
-          key: apiKey,
-          alternatives: true,
-        },
+          return res.status(200).send(response.data);
+        } catch (error) {
+          return res.status(500).send({
+            error: "Failed to fetch community info.",
+          });
+        }
       });
+    });
 
-      console.log("Response data:", response.data);
-      res.status(200).send(response.data);
-    } catch (error) {
-      res.status(500).send(error);
-    }
-  });
-});
+exports.getDirection = onRequest(
+    {secrets: [googleMapsApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        const originLocation = req.query.origin;
+        const destinationLocation = req.query.destination;
+        const mode = req.query.mode;
+        if (!originLocation || !destinationLocation || !mode) {
+          res.status(400).send("Invalid request");
+          return;
+        }
 
-exports.sendBulkEmail = onRequest(async (req, res) => {
-  cors(req, res, async () => {
-    const toEmails = JSON.parse(req.body.toEmails);
-    const nickname = req.body.nickname;
-    const event = JSON.parse(req.body.event);
-    if (!toEmails || !event || !nickname) {
-      res.status(400).send("Invalid request");
-      return;
-    }
-    try {
-      const msg = {
-        to: toEmails,
-        from: "15169131907@163.com",
-        templateId: "d-cd8dcbfa81bb464fb12b869190ecbbe5",
-        dynamic_template_data: {
-          nickname: nickname,
-          event_name: event.event_name,
-          community: event.location.community,
-          date: event.date,
-          time: event.time,
-          ticket_price: event.ticket_price,
-          attendees: event.attendees,
-          remaining_spots: event.remaining_spots,
-        },
-      };
-      await sgMail.sendMultiple(msg);
-      res.status(200).send("success");
-    } catch (error) {
-      res.status(500).send(error.message);
-    }
-  });
-});
+        const apiKey = googleMapsApiKey.value();
+        try {
+          const response = await axios.get(
+              "https://maps.googleapis.com/maps/api/directions/json",
+              {
+                params: {
+                  origin: originLocation,
+                  destination: destinationLocation,
+                  mode: mode,
+                  key: apiKey,
+                  alternatives: true,
+                },
+              },
+          );
+
+          console.log("Response data:", response.data);
+          res.status(200).send(response.data);
+        } catch (error) {
+          res.status(500).send(error);
+        }
+      });
+    });
+
+exports.sendBulkEmail = onRequest(
+    {secrets: [sendGridApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        const toEmails = JSON.parse(req.body.toEmails);
+        const nickname = req.body.nickname;
+        const event = JSON.parse(req.body.event);
+        if (!toEmails || !event || !nickname) {
+          res.status(400).send("Invalid request");
+          return;
+        }
+        try {
+          configureSendGrid();
+          const msg = {
+            to: toEmails,
+            from: "15169131907@163.com",
+            templateId: "d-cd8dcbfa81bb464fb12b869190ecbbe5",
+            dynamic_template_data: {
+              nickname: nickname,
+              event_name: event.event_name,
+              community: event.location.community,
+              date: event.date,
+              time: event.time,
+              ticket_price: event.ticket_price,
+              attendees: event.attendees,
+              remaining_spots: event.remaining_spots,
+            },
+          };
+          await sgMail.sendMultiple(msg);
+          res.status(200).send("success");
+        } catch (error) {
+          res.status(500).send(error.message);
+        }
+      });
+    });
 
 exports.getAllEvent = onRequest(async (req, res) => {
   cors(req, res, async () => {
@@ -250,3 +275,59 @@ exports.countAllEvent = onRequest(async (req, res) => {
     }
   });
 });
+
+exports.sendMsgToAI = onRequest({secrets: [geminiApiKey]}, async (req, res) => {
+  cors(req, res, async () => {
+    const msg = req.body.msg;
+    if (!msg) {
+      res.status(400).send("Invalid request");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+          "https://generativelanguage.googleapis.com/v1beta/models/" +
+          "gemini-1.5-flash:generateContent",
+          {
+            system_instruction: {
+              parts: [{
+                text: "You are a cat named Snowball. You help visitors " +
+                  "on a charity website with warmth and useful information.",
+              }],
+            },
+            contents: [{parts: [{text: msg}]}],
+          },
+          {headers: {"x-goog-api-key": geminiApiKey.value()}},
+      );
+
+      const text = response.data.candidates?.[0]
+          ?.content?.parts?.[0]?.text || "";
+      res.status(200).send({text});
+    } catch (error) {
+      res.status(500).send({error: "Failed to generate a response."});
+    }
+  });
+});
+
+exports.getWeather = onRequest(
+    {secrets: [openWeatherApiKey]},
+    async (req, res) => {
+      cors(req, res, async () => {
+        const lat = req.query.lat;
+        const lon = req.query.lon;
+        if (!lat || !lon) {
+          res.status(400).send("Invalid request");
+          return;
+        }
+
+        try {
+          const response = await axios.get(
+              "https://api.openweathermap.org/data/2.5/weather",
+              {params: {lat, lon, appid: openWeatherApiKey.value()}},
+          );
+          res.status(200).send(response.data);
+        } catch (error) {
+          res.status(500).send({error: "Failed to fetch weather data."});
+        }
+      });
+    });

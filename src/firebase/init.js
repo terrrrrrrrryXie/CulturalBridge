@@ -6,7 +6,7 @@ import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'REDACTED_GOOGLE_API_KEY',
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: 'culturalbridge-5fb9b.firebaseapp.com',
   projectId: 'culturalbridge-5fb9b',
   storageBucket: 'culturalbridge-5fb9b.appspot.com',

@@ -16,14 +16,6 @@ import {
 } from 'firebase/firestore'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 
-const {GoogleGenerativeAI} = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI("REDACTED_GOOGLE_API_KEY");
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-  systemInstruction: "You are a cat. Your name is Snowball. You've been deployed on a charity's website and you're responsible for guarding the site and giving some warmth to the visitors who come to it."
-});
-
 export default createStore({
   state: {
     melCommunityList: [
@@ -325,10 +317,11 @@ export default createStore({
     },
 
     async sendMsgToAI (_, { msg }) {      
-      const result = await model.generateContent(msg);
-      const response = result.response;
-      const text = response.text();
-      return text
+      const response = await axios.post(
+        'https://sendmsgtoai-7ayuf7vtfq-uc.a.run.app',
+        { msg }
+      )
+      return response.data.text
     },
 
     async getImmiStoriesList ({ commit }) {
@@ -401,12 +394,13 @@ export default createStore({
 
     async getWeather (_, { location }) {
       try {
-        const apikey = 'REDACTED_OPENWEATHER_KEY';
-        const url = `http://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=${apikey}`;
-        const response = await axios.get(url);
-        return response.data;
+        const response = await axios.get(
+          'https://getweather-7ayuf7vtfq-uc.a.run.app',
+          { params: { lat: location.lat, lon: location.lng } }
+        )
+        return response.data
       } catch (error) {
-        console.error('Error fetching weather data:', error);
+        console.error('Error fetching weather data:', error)
       }
     }
   },
